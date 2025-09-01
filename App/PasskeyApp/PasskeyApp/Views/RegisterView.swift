@@ -13,32 +13,43 @@ struct RegisterView: View {
 
     var body: some View {
         VStack {
-            Text("Register").font(.largeTitle).padding()
-            TextField("Name", text: $name)
-                .padding()
-                .autocapitalization(.words)
-                .textContentType(.name)
-                .padding(.horizontal)
-            TextField("Email", text: $email)
-                .padding()
-                .autocapitalization(.none)
-                .keyboardType(.emailAddress)
-                .textContentType(.emailAddress)
-                .padding(.horizontal)
-            SecureField("Password", text: $password)
-                .padding()
-                .padding(.horizontal)
-            SecureField("Confirm Password", text: $password)
-                .padding()
-                .padding(.horizontal)
-            AsyncButton("Register") {
-                if password != passwordConfirmation {
-                    showingPasswordErrorAlert = true
-                    return
+            Form {
+                Text("Register").font(.largeTitle).padding()
+                    .frame(maxWidth: .infinity, alignment: .center)
+                TextField("Name", text: $name)
+                    .padding()
+                    .autocapitalization(.words)
+                    .textContentType(.name)
+                    .padding(.horizontal)
+                TextField("Email", text: $email)
+                    .padding()
+                    .autocapitalization(.none)
+                    .keyboardType(.emailAddress)
+                    .textContentType(.username)
+                    .padding(.horizontal)
+                SecureField("Password", text: $password)
+                    .padding()
+                    .padding(.horizontal)
+                    .textContentType(.newPassword)
+                SecureField("Confirm Password", text: $password)
+                    .padding()
+                    .padding(.horizontal)
+                    .textContentType(.newPassword)
+                AsyncButton("Register") {
+                    if password != passwordConfirmation {
+                        showingPasswordErrorAlert = true
+                        return
+                    }
+                    await registerUser()
                 }
-                try await registerUser()
+                .frame(maxWidth: .infinity, alignment: .center)
+                .disabled(email.isEmpty || name.isEmpty || password.isEmpty)
             }
-            .disabled(email.isEmpty || name.isEmpty || password.isEmpty)
+            .onSubmit {
+                Task {
+                    await registerUser()
+                }
+            }
             VStack {
                 Text("Already have an account?")
                     .padding()
@@ -58,7 +69,7 @@ struct RegisterView: View {
         }
     }
 
-    func registerUser() async throws {
+    func registerUser() async {
         let createUserRequest = CreateUserData(name: name, email: email, password: password)
         do {
             let token = try await ResourceRequest<Token>(apiHostname: self.apiHostname, resourcePath: "users").save(createUserRequest, auth: auth)

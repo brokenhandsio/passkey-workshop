@@ -12,25 +12,36 @@ struct LoginView: View {
 
     var body: some View {
         VStack {
-            Text("Log In")
-                .font(.largeTitle)
-            TextField("Username", text: $username)
-                .padding()
-                .autocapitalization(.none)
-                .keyboardType(.emailAddress)
-                .padding(.horizontal)
-            SecureField("Password", text: $password)
-                .padding()
-                .padding(.horizontal)
-            AsyncButton("Log In") {
-                showingProgressView = true
-                if let token = await login() {
-                    auth.token = token
+            Form {
+                Text("Log In")
+                    .font(.largeTitle)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                TextField("Username", text: $username)
+                    .padding()
+                    .autocapitalization(.none)
+                    .keyboardType(.emailAddress)
+                    .padding(.horizontal)
+                    .textContentType(.username)
+                    .autocorrectionDisabled()
+                SecureField("Password", text: $password)
+                    .textContentType(.password)
+                    .padding()
+                    .padding(.horizontal)
+                AsyncButton("Log In") {
+                    showingProgressView = true
+                    if let token = await login() {
+                        auth.token = token
+                    }
+                    showingProgressView = false
                 }
-                showingProgressView = false
+                .frame(maxWidth: .infinity, alignment: .center)
+                .disabled(username.isEmpty || password.isEmpty)
             }
-            .frame(width: 120.0, height: 60.0)
-            .disabled(username.isEmpty || password.isEmpty)
+            .onSubmit {
+                Task {
+                    await login()
+                }
+            }
             VStack {
                 Text("Don't have an account?").padding()
                 Button("Register") {
