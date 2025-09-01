@@ -36,7 +36,7 @@ class Auth {
     }
     
     func login(username: String, password: String) async throws -> String {
-        let path = "\(apiHostname)/api/users/login"
+        let path = "\(apiHostname)/users/login"
         guard let url = URL(string: path) else {
             fatalError("Failed to convert URL")
         }

@@ -4,7 +4,7 @@ struct ResourceRequest<ResourceType> where ResourceType: Codable {
     let resourceURL: URL
     
     init(apiHostname: String, resourcePath: String) {
-        let baseURL = "\(apiHostname)/api/"
+        let baseURL = "\(apiHostname)/"
         guard let resourceURL = URL(string: baseURL) else {
             fatalError("Failed to convert baseURL to a URL")
         }
@@ -12,8 +12,14 @@ struct ResourceRequest<ResourceType> where ResourceType: Codable {
         resourceURL.appendingPathComponent(resourcePath)
     }
     
-    func getAll() async throws -> [ResourceType] {
-        let (data, _) = try await URLSession.shared.data(from: resourceURL)
+    func getAll(auth: Auth) async throws -> [ResourceType] {
+        guard let token = auth.token else {
+            auth.logout()
+            throw AuthError.notLoggedIn
+        }
+        var urlRequest = URLRequest(url: resourceURL)
+        urlRequest.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        let (data, _) = try await URLSession.shared.data(for: urlRequest)
         return try JSONDecoder().decode([ResourceType].self, from: data)
     }
     
