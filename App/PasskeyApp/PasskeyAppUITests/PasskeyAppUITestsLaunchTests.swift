@@ -1,10 +1,3 @@
-//
-//  PasskeyAppUITestsLaunchTests.swift
-//  PasskeyAppUITests
-//
-//  Created by Tim Condon on 31/08/2025.
-//
-
 import XCTest
 
 final class PasskeyAppUITestsLaunchTests: XCTestCase {

@@ -7,24 +7,19 @@ struct LoginView: View {
     @State var password = ""
     @State private var showingLoginErrorAlert = false
     @Environment(Auth.self) private var auth
-    
+    @Environment(\.dismiss) private var dismiss
+
     var body: some View {
         VStack {
-            Image("logo")
-                .aspectRatio(contentMode: .fit)
-                .padding(.leading, 75)
-                .padding(.trailing, 75)
             Text("Log In")
                 .font(.largeTitle)
             TextField("Username", text: $username)
                 .padding()
                 .autocapitalization(.none)
                 .keyboardType(.emailAddress)
-                .border(Color("rw-dark"), width: 1)
                 .padding(.horizontal)
             SecureField("Password", text: $password)
                 .padding()
-                .border(Color("rw-dark"), width: 1)
                 .padding(.horizontal)
             AsyncButton("Log In") {
                 if let token = await login() {
@@ -33,6 +28,12 @@ struct LoginView: View {
             }
             .frame(width: 120.0, height: 60.0)
             .disabled(username.isEmpty || password.isEmpty)
+            VStack {
+                Text("Don't have an account?").padding()
+                Button("Register") {
+                    dismiss()
+                }
+            }.padding()
         }
         .alert(isPresented: $showingLoginErrorAlert) {
             Alert(title: Text("Error"), message: Text("Could not log in. Check your credentials and try again"))

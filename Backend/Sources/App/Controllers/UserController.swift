@@ -26,7 +26,7 @@ struct UserController: RouteCollection {
     func createHandler(_ req: Request) async throws -> User {
         let userData = try req.content.decode(CreateUserData.self)
         let passwordHash = try Bcrypt.hash(userData.password)
-        let user = User(name: userData.name, email: userData.email, passwordHash: passwordHash, userType: userData.userType)
+        let user = User(name: userData.name, email: userData.email, passwordHash: passwordHash, userType: userData.userType ?? .normal)
         try await user.save(on: req.db)
         return user
     }
@@ -55,5 +55,5 @@ struct CreateUserData: Content {
     let name: String
     let email: String
     let password: String
-    let userType: UserType
+    let userType: UserType?
 }

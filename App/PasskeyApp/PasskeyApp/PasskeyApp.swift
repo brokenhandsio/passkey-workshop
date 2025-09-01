@@ -1,10 +1,3 @@
-//
-//  PasskeyAppApp.swift
-//  PasskeyApp
-//
-//  Created by Tim Condon on 31/08/2025.
-//
-
 import SwiftUI
 
 @main
@@ -29,7 +22,7 @@ struct PasskeyApp: App {
                 }
                 .environment(auth)
               } else {
-                LoginView(apiHostname: PasskeyApp.apiHostname).environment(auth)
+                RegisterView(apiHostname: PasskeyApp.apiHostname).environment(auth)
               }
             }
     }

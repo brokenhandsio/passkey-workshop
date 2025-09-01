@@ -1,10 +1,3 @@
-//
-//  PasskeyAppTests.swift
-//  PasskeyAppTests
-//
-//  Created by Tim Condon on 31/08/2025.
-//
-
 import Testing
 @testable import PasskeyApp
 
