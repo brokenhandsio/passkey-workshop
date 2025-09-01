@@ -1,14 +1,20 @@
 import SwiftUI
 
+enum RegisterError: Error {
+    case apiError
+    case passwordMismatch
+}
+
 struct RegisterView: View {
     let apiHostname: String
     @State var name = ""
     @State var email = ""
     @State var password = ""
     @State var passwordConfirmation: String = ""
-    @State private var showingPasswordErrorAlert = false
     @State private var showLoginView = false
-    @State private var showingCreateError = false
+    @State private var showAlert = false
+    @State private var errorType = RegisterError.apiError
+
     @Environment(Auth.self) private var auth
 
     var body: some View {
@@ -31,13 +37,14 @@ struct RegisterView: View {
                     .padding()
                     .padding(.horizontal)
                     .textContentType(.newPassword)
-                SecureField("Confirm Password", text: $password)
+                SecureField("Confirm Password", text: $passwordConfirmation)
                     .padding()
                     .padding(.horizontal)
                     .textContentType(.newPassword)
                 AsyncButton("Register") {
                     if password != passwordConfirmation {
-                        showingPasswordErrorAlert = true
+                        errorType = .passwordMismatch
+                        showAlert = true
                         return
                     }
                     await registerUser()
@@ -58,11 +65,9 @@ struct RegisterView: View {
                 }
             }.padding()
         }
-        .alert(isPresented: $showingPasswordErrorAlert) {
-            Alert(title: Text("Error"), message: Text("Please ensure your passwords match"))
-        }
-        .alert(isPresented: $showingCreateError) {
-            Alert(title: Text("Error"), message: Text("There was an error registering. Please try again"))
+        .alert(isPresented: $showAlert) {
+            let message = (errorType == .apiError) ? "There was an error registering. Please try again" : "Please ensure your passwords match"
+            return Alert(title: Text("Error"), message: Text(message))
         }
         .sheet(isPresented: $showLoginView) {
             LoginView(apiHostname: self.apiHostname)
@@ -75,9 +80,10 @@ struct RegisterView: View {
             let token = try await ResourceRequest<Token>(apiHostname: self.apiHostname, resourcePath: "users").save(createUserRequest, auth: auth)
             self.auth.token = token.value
         } catch {
-            self.showingCreateError = true
+            self.errorType = .apiError
+            self.showAlert = true
         }
-    }
+     }
 }
 
 #Preview {
