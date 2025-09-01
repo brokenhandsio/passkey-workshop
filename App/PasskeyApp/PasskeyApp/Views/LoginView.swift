@@ -51,8 +51,6 @@ struct LoginView: View {
     }
 }
 
-struct Login_Previews: PreviewProvider {
-    static var previews: some View {
-        LoginView(apiHostname: PasskeyApp.apiHostname)
-    }
+#Preview {
+    LoginView(apiHostname: PasskeyApp.apiHostname).environment(Auth(apiHostname: PasskeyApp.apiHostname))
 }

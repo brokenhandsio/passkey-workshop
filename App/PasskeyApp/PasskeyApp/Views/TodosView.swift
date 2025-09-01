@@ -45,8 +45,6 @@ struct TodosView: View {
     }
 }
 
-struct AcronymsView_Previews: PreviewProvider {
-    static var previews: some View {
-        TodosView(apiHostname: PasskeyApp.apiHostname)
-    }
+#Preview {
+    TodosView(apiHostname: PasskeyApp.apiHostname).environment(Auth(apiHostname: PasskeyApp.apiHostname))
 }
