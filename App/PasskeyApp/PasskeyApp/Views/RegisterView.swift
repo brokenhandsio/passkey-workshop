@@ -77,7 +77,7 @@ struct RegisterView: View {
     func registerUser() async {
         let createUserRequest = CreateUserData(name: name, email: email, password: password)
         do {
-            let token = try await ResourceRequest<Token>(apiHostname: self.apiHostname, resourcePath: "users").save(createUserRequest, auth: auth)
+            let token = try await ResourceRequest<Token>(apiHostname: self.apiHostname, resourcePath: "users").save(createUserRequest, auth: auth, authRequired: false)
             self.auth.token = token.value
         } catch {
             self.errorType = .apiError

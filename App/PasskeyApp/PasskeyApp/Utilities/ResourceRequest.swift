@@ -23,15 +23,17 @@ struct ResourceRequest<ResourceType> where ResourceType: Codable {
         return try JSONDecoder().decode([ResourceType].self, from: data)
     }
     
-    func save<CreateType>(_ saveData: CreateType, auth: Auth) async throws -> ResourceType where CreateType: Codable {
-        guard let token = auth.token else {
-            auth.logout()
-            throw AuthError.notLoggedIn
-        }
+    func save<CreateType>(_ saveData: CreateType, auth: Auth, authRequired: Bool = true) async throws -> ResourceType where CreateType: Codable {
         var urlRequest = URLRequest(url: resourceURL)
         urlRequest.httpMethod = "POST"
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        urlRequest.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        if authRequired {
+            guard let token = auth.token else {
+                auth.logout()
+                throw AuthError.notLoggedIn
+            }
+            urlRequest.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
         urlRequest.httpBody = try JSONEncoder().encode(saveData)
         
         let (data, response) = try await URLSession.shared.data(for: urlRequest)
