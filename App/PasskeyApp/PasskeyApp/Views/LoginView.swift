@@ -6,6 +6,7 @@ struct LoginView: View {
     @State var username = ""
     @State var password = ""
     @State private var showingLoginErrorAlert = false
+    @State private var showingProgressView = false
     @Environment(Auth.self) private var auth
     @Environment(\.dismiss) private var dismiss
 
@@ -22,9 +23,11 @@ struct LoginView: View {
                 .padding()
                 .padding(.horizontal)
             AsyncButton("Log In") {
+                showingProgressView = true
                 if let token = await login() {
                     auth.token = token
                 }
+                showingProgressView = false
             }
             .frame(width: 120.0, height: 60.0)
             .disabled(username.isEmpty || password.isEmpty)
@@ -37,6 +40,14 @@ struct LoginView: View {
         }
         .alert(isPresented: $showingLoginErrorAlert) {
             Alert(title: Text("Error"), message: Text("Could not log in. Check your credentials and try again"))
+        }
+        .overlay {
+            if showingProgressView {
+                ProgressView("Logging In...")
+                    .padding()
+                    .background(.regularMaterial)
+                    .cornerRadius(10)
+            }
         }
     }
     

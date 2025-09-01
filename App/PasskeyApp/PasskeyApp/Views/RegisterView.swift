@@ -8,6 +8,7 @@ struct RegisterView: View {
     @State var passwordConfirmation: String = ""
     @State private var showingPasswordErrorAlert = false
     @State private var showLoginView = false
+    @State private var showingCreateError = false
     @Environment(Auth.self) private var auth
 
     var body: some View {
@@ -32,11 +33,10 @@ struct RegisterView: View {
                 .padding(.horizontal)
             AsyncButton("Register") {
                 if password != passwordConfirmation {
-                    
+                    showingPasswordErrorAlert = true
+                    return
                 }
-//                if let token = await login() {
-//                    auth.token = token
-//                }
+                try await registerUser()
             }
             .disabled(email.isEmpty || name.isEmpty || password.isEmpty)
             VStack {
@@ -50,8 +50,21 @@ struct RegisterView: View {
         .alert(isPresented: $showingPasswordErrorAlert) {
             Alert(title: Text("Error"), message: Text("Please ensure your passwords match"))
         }
+        .alert(isPresented: $showingCreateError) {
+            Alert(title: Text("Error"), message: Text("There was an error registering. Please try again"))
+        }
         .sheet(isPresented: $showLoginView) {
             LoginView(apiHostname: self.apiHostname)
+        }
+    }
+
+    func registerUser() async throws {
+        let createUserRequest = CreateUserData(name: name, email: email, password: password)
+        do {
+            let token = try await ResourceRequest<Token>(apiHostname: self.apiHostname, resourcePath: "users").save(createUserRequest, auth: auth)
+            self.auth.token = token.value
+        } catch {
+            self.showingCreateError = true
         }
     }
 }

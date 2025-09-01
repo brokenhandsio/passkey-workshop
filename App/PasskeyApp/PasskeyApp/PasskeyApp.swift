@@ -9,21 +9,25 @@ struct PasskeyApp: App {
 
     var body: some Scene {
         WindowGroup {
-              if auth.isLoggedIn {
+            if auth.isLoggedIn {
                 TabView {
-                  TodosView(apiHostname: PasskeyApp.apiHostname)
-                    .tabItem {
-                      Label("Todos", systemImage: "abc")
-                    }
+                    TodosView(apiHostname: PasskeyApp.apiHostname)
+                        .tabItem {
+                            Label("Todos", systemImage: "list.bullet")
+                        }
                     TodosView(apiHostname: PasskeyApp.apiHostname, myTodos: true)
-                      .tabItem {
-                        Label("My Todos", systemImage: "abc")
-                      }
+                        .tabItem {
+                            Label("My Todos", systemImage: "checklist")
+                        }
+                    SettingsView()
+                        .tabItem {
+                            Label("Settings", systemImage: "gear")
+                        }
                 }
                 .environment(auth)
-              } else {
+            } else {
                 RegisterView(apiHostname: PasskeyApp.apiHostname).environment(auth)
-              }
             }
+        }
     }
 }

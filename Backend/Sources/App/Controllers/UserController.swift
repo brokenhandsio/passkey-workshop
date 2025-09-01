@@ -23,12 +23,14 @@ struct UserController: RouteCollection {
         return try await User.query(on: req.db).all()
     }
 
-    func createHandler(_ req: Request) async throws -> User {
+    func createHandler(_ req: Request) async throws -> Token {
         let userData = try req.content.decode(CreateUserData.self)
         let passwordHash = try Bcrypt.hash(userData.password)
         let user = User(name: userData.name, email: userData.email, passwordHash: passwordHash, userType: userData.userType ?? .normal)
         try await user.save(on: req.db)
-        return user
+        let token = try user.generateToken()
+        try await token.save(on: req.db)
+        return token
     }
 
     func deleteHandler(_ req: Request) async throws -> HTTPStatus {
