@@ -12,10 +12,10 @@ struct LoginView: View {
 
     var body: some View {
         VStack {
+            Text("Log In")
+                .font(.largeTitle)
+                .frame(maxWidth: .infinity, alignment: .center)
             Form {
-                Text("Log In")
-                    .font(.largeTitle)
-                    .frame(maxWidth: .infinity, alignment: .center)
                 TextField("Username", text: $username)
                     .padding()
                     .autocapitalization(.none)
@@ -34,6 +34,7 @@ struct LoginView: View {
                     }
                     showingProgressView = false
                 }
+                .buttonStyle(.borderedProminent)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .disabled(username.isEmpty || password.isEmpty)
             }
@@ -43,8 +44,7 @@ struct LoginView: View {
                 }
             }
             VStack {
-                Text("Don't have an account?").padding()
-                Button("Register") {
+                Button("Cancel") {
                     dismiss()
                 }
             }.padding()

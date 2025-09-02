@@ -2,7 +2,8 @@ import SwiftUI
 
 @main
 struct PasskeyApp: App {
-    static let apiHostname = "http://localhost:8080"
+    static let apiHostname = "https://demos.brokenhands.ngrok.app"
+    static let appDomain = "demos.brokenhands.ngrok.app"
 
     @State
     var auth = Auth(apiHostname: PasskeyApp.apiHostname)
@@ -26,7 +27,7 @@ struct PasskeyApp: App {
                 }
                 .environment(auth)
             } else {
-                RegisterView(apiHostname: PasskeyApp.apiHostname).environment(auth)
+                WelcomeView(apiHostname: PasskeyApp.apiHostname).environment(auth)
             }
         }
     }

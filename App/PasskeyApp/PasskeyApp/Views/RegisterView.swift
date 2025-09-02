@@ -14,14 +14,15 @@ struct RegisterView: View {
     @State private var showLoginView = false
     @State private var showAlert = false
     @State private var errorType = RegisterError.apiError
+    @Environment(\.authorizationController) var authorizationController
 
     @Environment(Auth.self) private var auth
 
     var body: some View {
         VStack {
+            Text("Register").font(.largeTitle).padding()
+                .frame(maxWidth: .infinity, alignment: .center)
             Form {
-                Text("Register").font(.largeTitle).padding()
-                    .frame(maxWidth: .infinity, alignment: .center)
                 TextField("Name", text: $name)
                     .padding()
                     .autocapitalization(.words)
@@ -49,6 +50,7 @@ struct RegisterView: View {
                     }
                     await registerUser()
                 }
+                .buttonStyle(.borderedProminent)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .disabled(email.isEmpty || name.isEmpty || password.isEmpty)
             }
