@@ -6,7 +6,8 @@ struct WelcomeView: View {
     @State private var showRegisterView = false
     @State private var passkeyError = false
     @Environment(Auth.self) private var auth
-    
+    @Environment(\.authorizationController) private var authorizationController
+
     var body: some View {
         Group {
             Spacer()
@@ -14,7 +15,7 @@ struct WelcomeView: View {
                 Text("Welcome to Todos")
                     .font(.largeTitle)
                     .padding()
-                
+
                 AsyncButton("Register") {
                     showRegisterView = true
                 }
@@ -22,9 +23,9 @@ struct WelcomeView: View {
                 .controlSize(.large)
                 .glassEffect()
             }
-            
+
             Spacer()
-            
+
             VStack {
                 Text("Already have an account?")
                     .padding()
@@ -42,6 +43,17 @@ struct WelcomeView: View {
         .alert(isPresented: $passkeyError) {
             return Alert(title: Text("Error"), message: Text("There was a problem registering with a passkey. Please try again or register with email and password"))
         }
+        .task {
+            try? await checkForPasskey()
+        }
+    }
+
+    func attemptPasskeySignup() async throws {
+
+    }
+
+    func checkForPasskey() async throws {
+
     }
 }
 
