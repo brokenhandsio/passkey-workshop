@@ -3,9 +3,8 @@ import Foundation
 struct ResourceRequest<ResourceType> where ResourceType: Codable {
     let resourceURL: URL
     
-    init(apiHostname: String, resourcePath: String) {
-        let baseURL = "\(apiHostname)/"
-        guard let resourceURL = URL(string: baseURL) else {
+    init(resourcePath: String) {
+        guard let resourceURL = URL(string: PasskeyApp.apiHostname) else {
             fatalError("Failed to convert baseURL to a URL")
         }
         self.resourceURL =

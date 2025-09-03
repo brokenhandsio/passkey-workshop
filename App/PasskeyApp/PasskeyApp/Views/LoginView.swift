@@ -2,14 +2,13 @@ import SwiftUI
 import AuthenticationServices
 
 struct LoginView: View {
-    let apiHostname: String
     @State var username = ""
     @State var password = ""
     @State private var showingLoginErrorAlert = false
     @State private var showingProgressView = false
     @Environment(Auth.self) private var auth
     @Environment(\.dismiss) private var dismiss
-
+    
     var body: some View {
         VStack {
             Text("Log In")
@@ -75,5 +74,5 @@ struct LoginView: View {
 }
 
 #Preview {
-    LoginView(apiHostname: PasskeyApp.apiHostname).environment(Auth(apiHostname: PasskeyApp.apiHostname))
+    LoginView().environment(Auth())
 }

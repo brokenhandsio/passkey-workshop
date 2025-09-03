@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ResponsiveNavigationStyle: ViewModifier {
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    
+
     @ViewBuilder
     func body(content: Content) -> some View {
         if horizontalSizeClass == .compact { /// iPhone

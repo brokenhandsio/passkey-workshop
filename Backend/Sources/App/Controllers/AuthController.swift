@@ -1,5 +1,6 @@
 import Vapor
 import WebAuthn
+import Fluent
 
 struct AuthController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {

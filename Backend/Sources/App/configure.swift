@@ -16,6 +16,7 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(CreateTodo())
     app.migrations.add(CreateToken())
     app.migrations.add(CreateAdminUser())
+    app.migrations.add(CreateWebAuthnCredential())
 
     try await app.autoMigrate()
 

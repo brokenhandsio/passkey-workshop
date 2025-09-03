@@ -4,9 +4,9 @@ import AuthenticationServices
 struct WelcomeView: View {
     @State private var showLoginView = false
     @State private var showRegisterView = false
+    @State private var passkeyError = false
     @Environment(Auth.self) private var auth
-    let apiHostname: String
-
+    
     var body: some View {
         Group {
             Spacer()
@@ -14,17 +14,17 @@ struct WelcomeView: View {
                 Text("Welcome to Todos")
                     .font(.largeTitle)
                     .padding()
-
-                Button("Register") {
+                
+                AsyncButton("Register") {
                     showRegisterView = true
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
                 .glassEffect()
             }
-
+            
             Spacer()
-
+            
             VStack {
                 Text("Already have an account?")
                     .padding()
@@ -34,14 +34,17 @@ struct WelcomeView: View {
             }
         }
         .sheet(isPresented: $showLoginView) {
-            LoginView(apiHostname: self.apiHostname)
+            LoginView()
         }
         .fullScreenCover(isPresented: $showRegisterView) {
-            RegisterView(apiHostname: self.apiHostname)
+            RegisterView()
+        }
+        .alert(isPresented: $passkeyError) {
+            return Alert(title: Text("Error"), message: Text("There was a problem registering with a passkey. Please try again or register with email and password"))
         }
     }
 }
 
 #Preview {
-    WelcomeView(apiHostname: PasskeyApp.apiHostname).environment(Auth(apiHostname: PasskeyApp.apiHostname))
+    WelcomeView().environment(Auth())
 }

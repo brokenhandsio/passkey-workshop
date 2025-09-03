@@ -6,10 +6,7 @@ class Auth {
     
     private(set) var isLoggedIn = false
     
-    let apiHostname: String
-    
-    init(apiHostname: String) {
-        self.apiHostname = apiHostname
+    init() {
         if token != nil {
             self.isLoggedIn = true
         }
@@ -36,7 +33,7 @@ class Auth {
     }
     
     func login(username: String, password: String) async throws -> String {
-        let path = "\(apiHostname)/users/login"
+        let path = "\(PasskeyApp.apiHostname)/users/login"
         guard let url = URL(string: path) else {
             fatalError("Failed to convert URL")
         }

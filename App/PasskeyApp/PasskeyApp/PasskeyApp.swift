@@ -4,19 +4,19 @@ import SwiftUI
 struct PasskeyApp: App {
     static let apiHostname = "https://demos.brokenhands.ngrok.app"
     static let appDomain = "demos.brokenhands.ngrok.app"
-
+    
     @State
-    var auth = Auth(apiHostname: PasskeyApp.apiHostname)
-
+    var auth = Auth()
+    
     var body: some Scene {
         WindowGroup {
             if auth.isLoggedIn {
                 TabView {
-                    TodosView(apiHostname: PasskeyApp.apiHostname)
+                    TodosView()
                         .tabItem {
                             Label("Todos", systemImage: "list.bullet")
                         }
-                    TodosView(apiHostname: PasskeyApp.apiHostname, myTodos: true)
+                    TodosView(myTodos: true)
                         .tabItem {
                             Label("My Todos", systemImage: "checklist")
                         }
@@ -27,7 +27,7 @@ struct PasskeyApp: App {
                 }
                 .environment(auth)
             } else {
-                WelcomeView(apiHostname: PasskeyApp.apiHostname).environment(auth)
+                WelcomeView().environment(auth)
             }
         }
     }

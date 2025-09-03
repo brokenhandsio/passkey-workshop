@@ -6,7 +6,6 @@ enum RegisterError: Error {
 }
 
 struct RegisterView: View {
-    let apiHostname: String
     @State var name = ""
     @State var email = ""
     @State var password = ""
@@ -14,10 +13,8 @@ struct RegisterView: View {
     @State private var showLoginView = false
     @State private var showAlert = false
     @State private var errorType = RegisterError.apiError
-    @Environment(\.authorizationController) var authorizationController
-
     @Environment(Auth.self) private var auth
-
+    
     var body: some View {
         VStack {
             Text("Register").font(.largeTitle).padding()
@@ -72,22 +69,22 @@ struct RegisterView: View {
             return Alert(title: Text("Error"), message: Text(message))
         }
         .sheet(isPresented: $showLoginView) {
-            LoginView(apiHostname: self.apiHostname)
+            LoginView()
         }
     }
-
+    
     func registerUser() async {
         let createUserRequest = CreateUserData(name: name, email: email, password: password)
         do {
-            let token = try await ResourceRequest<Token>(apiHostname: self.apiHostname, resourcePath: "users").save(createUserRequest, auth: auth, authRequired: false)
+            let token = try await ResourceRequest<Token>(resourcePath: "users").save(createUserRequest, auth: auth, authRequired: false)
             self.auth.token = token.value
         } catch {
             self.errorType = .apiError
             self.showAlert = true
         }
-     }
+    }
 }
 
 #Preview {
-    RegisterView(apiHostname: PasskeyApp.apiHostname).environment(Auth(apiHostname: PasskeyApp.apiHostname))
+    RegisterView().environment(Auth())
 }

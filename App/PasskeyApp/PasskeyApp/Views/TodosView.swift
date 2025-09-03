@@ -5,17 +5,15 @@ struct TodosView: View {
     @Environment(Auth.self) private var auth
     @State private var todos: [Todo] = []
     @State private var displayAddNewTodo = false
-    let apiHostname: String
     let todosRequest: ResourceRequest<Todo>
     let myTodos: Bool
 
-    init(apiHostname: String, myTodos: Bool = false) {
-        self.apiHostname = apiHostname
+    init(myTodos: Bool = false) {
         self.myTodos = myTodos
         if myTodos {
-            self.todosRequest = ResourceRequest<Todo>(apiHostname: apiHostname, resourcePath: "todos/mine")
+            self.todosRequest = ResourceRequest<Todo>(resourcePath: "todos/mine")
         } else {
-            self.todosRequest = ResourceRequest<Todo>(apiHostname: apiHostname, resourcePath: "todos")
+            self.todosRequest = ResourceRequest<Todo>(resourcePath: "todos")
         }
     }
 
@@ -45,7 +43,7 @@ struct TodosView: View {
                 }
             }
             .sheet(isPresented: $displayAddNewTodo) {
-                CreateTodoView(apiHostname: self.apiHostname) { newTodo in
+                CreateTodoView() { newTodo in
                     self.todos.append(newTodo)
                 }
             }
@@ -71,5 +69,5 @@ struct TodosView: View {
 }
 
 #Preview {
-    TodosView(apiHostname: PasskeyApp.apiHostname).environment(Auth(apiHostname: PasskeyApp.apiHostname))
+    TodosView().environment(Auth())
 }

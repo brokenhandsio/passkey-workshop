@@ -4,10 +4,9 @@ struct CreateTodoView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var newTodo = ""
     @State private var showingCreateError = false
-    let apiHostname: String
     @Environment(Auth.self) private var auth
     var onAdd: (Todo) -> Void
-
+    
     var body: some View {
         NavigationView {
             Form {
@@ -32,12 +31,12 @@ struct CreateTodoView: View {
             Alert(title: Text("Error"), message: Text("There was an error creating the todo. Please try again later."))
         }
     }
-
+    
     @MainActor
     func createTodo() async throws -> Todo? {
         let createTodoData = CreateTodoRequest(title: newTodo)
         do {
-            let todo = try await ResourceRequest<Todo>(apiHostname: self.apiHostname, resourcePath: "todos").save(createTodoData, auth: auth)
+            let todo = try await ResourceRequest<Todo>(resourcePath: "todos").save(createTodoData, auth: auth)
             return todo
         } catch {
             self.showingCreateError = true
@@ -47,5 +46,5 @@ struct CreateTodoView: View {
 }
 
 #Preview {
-    CreateTodoView(apiHostname: PasskeyApp.apiHostname, onAdd: { _ in }).environment(Auth(apiHostname: PasskeyApp.apiHostname))
+    CreateTodoView(onAdd: { _ in }).environment(Auth())
 }
