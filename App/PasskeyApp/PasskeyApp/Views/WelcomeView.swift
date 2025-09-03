@@ -17,7 +17,7 @@ struct WelcomeView: View {
                     .padding()
 
                 AsyncButton("Register") {
-                    showRegisterView = true
+                    try await attemptPasskeySignup()
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
@@ -32,6 +32,11 @@ struct WelcomeView: View {
                 Button("Log In") {
                     showLoginView = true
                 }
+            }
+        }
+        .onAppear {
+            Task {
+                try await checkForPasskey()
             }
         }
         .sheet(isPresented: $showLoginView) {
@@ -54,6 +59,58 @@ struct WelcomeView: View {
 
     func checkForPasskey() async throws {
 
+    }
+
+    func attemptPasskeySignup() async throws {
+        let makeCredentialsData = try await PasskeyRequests.getPasskeyRegistrationFromServer()
+
+        let provider = ASAuthorizationAccountCreationProvider()
+        let request = provider.createPlatformPublicKeyCredentialRegistrationRequest(
+            acceptedContactIdentifiers: [.email],
+            shouldRequestName: true,
+            relyingPartyIdentifier: PasskeyApp.appDomain,
+            challenge: Data(makeCredentialsData.challenge),
+            userID: Data(makeCredentialsData.user.id)
+        )
+
+        do {
+            let result = try await authorizationController.performRequest(request)
+            if case .passkeyAccountCreation(let account) = result {
+                let data = try await PasskeyRequests.completePasskeyRegistration(account: account)
+                let token = try JSONDecoder().decode(Token.self, from: data)
+                self.auth.token = token.value
+            }
+        } catch
+            ASAuthorizationError.deviceNotConfiguredForPasskeyCreation {
+            showRegisterView = true
+        } catch ASAuthorizationError.canceled {
+            showRegisterView = true
+        } catch {
+            passkeyError = true
+            throw error
+        }
+    }
+
+    func checkForPasskey() async throws {
+        let assertionData = try await PasskeyRequests.getAssertionData()
+        let platformProvider = ASAuthorizationPlatformPublicKeyCredentialProvider(relyingPartyIdentifier: PasskeyApp.appDomain)
+        let platformKeyRequest = platformProvider.createCredentialAssertionRequest(challenge: Data(assertionData.challenge))
+        do {
+            // ...
+            let result = try await authorizationController.performRequest(platformKeyRequest, options: .preferImmediatelyAvailableCredentials)
+            if case .passkeyAssertion(let assertion) = result {
+                let data = try await PasskeyRequests.completePasskeyAssertion(assertion: assertion)
+                let token = try JSONDecoder().decode(Token.self, from: data)
+                self.auth.token = token.value
+            }
+        } catch ASAuthorizationError.deviceNotConfiguredForPasskeyCreation {
+            // Nothing to do, keep displaying the welcome form
+        } catch ASAuthorizationError.canceled {
+            // Nothing to do, keep displaying the welcome form
+        } catch {
+            passkeyError = true
+            throw error
+        }
     }
 }
 

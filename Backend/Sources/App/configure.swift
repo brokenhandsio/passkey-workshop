@@ -23,13 +23,13 @@ public func configure(_ app: Application) async throws {
     // register routes
     try routes(app)
 
-    let domain = "demos.brokenhands.ngrok.app" // Change Me!
+    let domain = "demos.brokenhands.ngrok.app"
     let appName = "Passkeys Demo App"
 
     app.webAuthn = WebAuthnManager(
         config: WebAuthnManager.Config(
             relyingPartyID: domain,
-            relyingPartyName: "Broken Hands Passkeys",
+            relyingPartyName: appName,
             relyingPartyOrigin: "https://\(domain)",
         )
     )

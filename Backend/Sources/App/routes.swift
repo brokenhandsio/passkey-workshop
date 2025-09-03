@@ -10,33 +10,33 @@ func routes(_ app: Application) throws {
         return "Hello, world!"
     }
 
-//    app.get(".well-known", "apple-app-site-association") { req -> Response in
-//            let appIdentifier = "<YOUR_APP_IDENTIFIER>" // e.g. "ABCDE12345.com.example.app"
-//            let responseString =
-//                """
-//                {
-//                    "applinks": {
-//                        "details": [
-//                            {
-//                                "appIDs": [
-//                                    "\(appIdentifier)"
-//                                ],
-//                                "components": [
-//                                ]
-//                            }
-//                        ]
-//                    },
-//                    "webcredentials": {
-//                        "apps": [
-//                            "\(appIdentifier)"
-//                        ]
-//                    }
-//                }
-//                """
-//            let response = try await responseString.encodeResponse(for: req)
-//            response.headers.contentType = HTTPMediaType(type: "application", subType: "json")
-//            return response
-//        }
+    app.get(".well-known", "apple-app-site-association") { req -> Response in
+        let appIdentifier = "YWLW23LT6G.io.brokenhands.apps.passkeys" // e.g. "ABCDE12345.com.example.app"
+        let responseString =
+                """
+                {
+                    "applinks": {
+                        "details": [
+                            {
+                                "appIDs": [
+                                    "\(appIdentifier)"
+                                ],
+                                "components": [
+                                ]
+                            }
+                        ]
+                    },
+                    "webcredentials": {
+                        "apps": [
+                            "\(appIdentifier)"
+                        ]
+                    }
+                }
+                """
+        let response = try await responseString.encodeResponse(for: req)
+        response.headers.contentType = HTTPMediaType(type: "application", subType: "json")
+        return response
+    }
 
     try app.register(collection: UserController())
     try app.register(collection: TodoController())

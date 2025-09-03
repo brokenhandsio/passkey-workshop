@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:training-passkeys}/Backend",
+            "name": "Debug App (Backend)",
+            "program": "${workspaceFolder:training-passkeys}/Backend/.build/debug/App",
+            "preLaunchTask": "swift: Build Debug App (Backend)"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:training-passkeys}/Backend",
+            "name": "Release App (Backend)",
+            "program": "${workspaceFolder:training-passkeys}/Backend/.build/release/App",
+            "preLaunchTask": "swift: Build Release App (Backend)"
+        }
+    ]
+}
